@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Arty Pro</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --light-gray: #e5e7eb;
+            --dark-gray: #333;
+            --white: #ffffff;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #1d1d1d;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--dark-gray);
+            color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 10px;
+            border-right: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .tool-group:last-child {
+            border-right: none;
+        }
+
+        .pixel-grid {
+            display: grid;
+            max-width: fit-content;
+            margin: 20px auto;
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid #ddd;
+        }
+
+        .pixel {
+            background: var(--light-gray);
+            cursor: pointer;
+            transition: background 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .pixel:hover {
+            opacity: 0.8;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 5px;
+            margin: 0 10px;
+        }
+        
+        .palette-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s ease;
+        }
+        
+        .palette-color.active {
+            border-color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--white);
+        }
+        
+        label {
+            font-size: 0.9rem;
+        }
+        
+        select, input[type="number"] {
+            background-color: var(--white);
+            border: none;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .tool-button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--white);
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .tool-button:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .tool-button.active {
+            background: var(--primary);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .drawing-area {
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 700px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .tool-group {
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+                padding: 10px 0;
+            }
+            
+            .tool-group:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Pixel Arty Pro</h1>
+        <div class="toolbar">
+            <div class="tool-group">
+                <input type="color" id="colorPicker" value="#6366f1">
+                <div class="color-palette" id="colorPalette">
+                    <!-- Palette colors will be added by JS -->
+                </div>
+            </div>
+            
+            <div class="tool-group">
+                <button id="pencilTool" class="tool-button active" title="Pencil">✏️</button>
+                <button id="fillTool" class="tool-button" title="Fill">🪣</button>
+                <button id="eraserTool" class="tool-button" title="Eraser">🧽</button>
+            </div>
+            
+            <div class="tool-group">
+                <div class="size-control">
+                    <label for="gridSize">Grid:</label>
+                    <select id="gridSize">
+                        <option value="16">16×16</option>
+                        <option value="20" selected>20×20</option>
+                        <option value="32">32×32</option>
+                        <option value="48">48×48</option>
+                        <option value="64">64×64</option>
+                    </select>
+                </div>
+                <div class="size-control">
+                    <label for="pixelSize">Pixel:</label>
+                    <input type="number" id="pixelSize" min="10" max="30" value="20">
+                </div>
+            </div>
+            
+            <div class="tool-group">
+                <button id="clear" class="btn">Clear</button>
+                <button id="toggleGrid" class="btn">Toggle Grid</button>
+                <button id="download" class="btn">Save</button>
+            </div>
+        </div>
+        
+        <div class="drawing-area">
+            <div class="pixel-grid" id="pixelGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const grid = document.getElementById("pixelGrid");
+        const colorPicker = document.getElementById("colorPicker");
+        const colorPalette = document.getElementById("colorPalette");
+        const clearButton = document.getElementById("clear");
+        const toggleGridButton = document.getElementById("toggleGrid");
+        const downloadButton = document.getElementById("download");
+        const gridSizeSelect = document.getElementById("gridSize");
+        const pixelSizeInput = document.getElementById("pixelSize");
+        
+        // Tool buttons
+        const pencilButton = document.getElementById("pencilTool");
+        const fillButton = document.getElementById("fillTool");
+        const eraserButton = document.getElementById("eraserTool");
+        
+        // State variables
+        let currentColor = colorPicker.value;
+        let currentTool = "pencil";
+        let isDrawing = false;
+        let gridSize = parseInt(gridSizeSelect.value);
+        let pixelSize = parseInt(pixelSizeInput.value);
+        let showGridLines = true;
+        
+        // Default color palette
+        const colors = [
+            "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff", 
+            "#ffff00", "#00ffff", "#ff00ff", "#ff9900", "#9900ff"
+        ];
+        
+        // Initialize the app
+        function initApp() {
+            createColorPalette();
+            createPixelGrid();
+            setupEventListeners();
+        }
+        
+        // Create color palette buttons
+        function createColorPalette() {
+            colorPalette.innerHTML = "";
+            colors.forEach(color => {
+                const colorButton = document.createElement("div");
+                colorButton.classList.add("palette-color");
+                colorButton.style.backgroundColor = color;
+                colorButton.dataset.color = color;
+                
+                if (color === currentColor) {
+                    colorButton.classList.add("active");
+                }
+                
+                colorButton.addEventListener("click", () => {
+                    currentColor = color;
+                    colorPicker.value = color;
+                    document.querySelectorAll(".palette-color").forEach(btn => {
+                        btn.classList.remove("active");
+                    });
+                    colorButton.classList.add("active");
+                });
+                
+                colorPalette.appendChild(colorButton);
+            });
+        }
+        
+        // Create pixel grid
+        function createPixelGrid() {
+            grid.innerHTML = "";
+            
+            // Set grid size and pixel size
+            grid.style.gridTemplateColumns = `repeat(${gridSize}, ${pixelSize}px)`;
+            grid.style.gridTemplateRows = `repeat(${gridSize}, ${pixelSize}px)`;
+            grid.style.gap = "0";
+            
+            // Create pixels
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const pixel = document.createElement("div");
+                pixel.classList.add("pixel");
+                pixel.style.width = `${pixelSize}px`;
+                pixel.style.height = `${pixelSize}px`;
+                pixel.style.backgroundColor = "#ffffff";
+                pixel.dataset.index = i;
+                pixel.dataset.row = Math.floor(i / gridSize);
+                pixel.dataset.col = i % gridSize;
+                
+                // Add pixel events
+                pixel.addEventListener("mousedown", startDrawing);
+                pixel.addEventListener("mouseover", draw);
+                pixel.addEventListener("touchstart", handleTouch);
+                pixel.addEventListener("touchmove", handleTouchMove);
+                
+                grid.appendChild(pixel);
+            }
+            
+            updateGridLines();
+        }
+        
+        // Update grid lines visibility
+        function updateGridLines() {
+            const pixels = document.querySelectorAll(".pixel");
+            pixels.forEach(pixel => {
+                if (showGridLines) {
+                    pixel.style.border = "1px solid rgba(0,0,0,0.1)";
+                } else {
+                    pixel.style.border = "none";
+                }
+            });
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            document.addEventListener("mouseup", stopDrawing);
+            document.addEventListener("touchend", stopDrawing);
+            
+            colorPicker.addEventListener("input", () => {
+                currentColor = colorPicker.value;
+                document.querySelectorAll(".palette-color").forEach(btn => {
+                    btn.classList.remove("active");
+                    if (btn.dataset.color === currentColor) {
+                        btn.classList.add("active");
+                    }
+                });
+            });
+            
+            clearButton.addEventListener("click", () => {
+                document.querySelectorAll(".pixel").forEach(pixel => {
+                    pixel.style.backgroundColor = "#ffffff";
+                });
+            });
+            
+            toggleGridButton.addEventListener("click", () => {
+                showGridLines = !showGridLines;
+                updateGridLines();
+            });
+            
+            downloadButton.addEventListener("click", saveImage);
+            
+            gridSizeSelect.addEventListener("change", () => {
+                gridSize = parseInt(gridSizeSelect.value);
+                createPixelGrid();
+            });
+            
+            pixelSizeInput.addEventListener("change", () => {
+                pixelSize = parseInt(pixelSizeInput.value);
+                if (pixelSize < 10) pixelSize = 10;
+                if (pixelSize > 30) pixelSize = 30;
+                pixelSizeInput.value = pixelSize;
+                createPixelGrid();
+            });
+            
+            // Tool selection
+            pencilButton.addEventListener("click", () => {
+                setActiveTool("pencil");
+            });
+            
+            fillButton.addEventListener("click", () => {
+                setActiveTool("fill");
+            });
+            
+            eraserButton.addEventListener("click", () => {
+                setActiveTool("eraser");
+            });
+        }
+        
+        // Set active tool
+        function setActiveTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll(".tool-button").forEach(btn => {
+                btn.classList.remove("active");
+            });
+            
+            switch(tool) {
+                case "pencil":
+                    pencilButton.classList.add("active");
+                    break;
+                case "fill":
+                    fillButton.classList.add("active");
+                    break;
+                case "eraser":
+                    eraserButton.classList.add("active");
+                    break;
+            }
+        }
+        
+        // Drawing functions
+        function startDrawing(e) {
+            isDrawing = true;
+            
+            if (currentTool === "fill") {
+                fillArea(e.target);
+            } else {
+                colorPixel(e.target);
+            }
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            colorPixel(e.target);
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function colorPixel(pixel) {
+            if (currentTool === "eraser") {
+                pixel.style.backgroundColor = "#ffffff";
+            } else if (currentTool === "pencil") {
+                pixel.style.backgroundColor = currentColor;
+            }
+        }
+        
+        // Fill algorithm (flood fill)
+        function fillArea(startPixel) {
+            const targetColor = startPixel.style.backgroundColor;
+            const fillColor = currentTool === "eraser" ? "#ffffff" : currentColor;
+            
+            if (targetColor === fillColor) return;
+            
+            const pixels = Array.from(document.querySelectorAll(".pixel"));
+            const visited = new Set();
+            const queue = [startPixel];
+            
+            while (queue.length > 0) {
+                const pixel = queue.shift();
+                if (visited.has(pixel.dataset.index)) continue;
+                
+                if (pixel.style.backgroundColor === targetColor) {
+                    pixel.style.backgroundColor = fillColor;
+                    visited.add(pixel.dataset.index);
+                    
+                    const row = parseInt(pixel.dataset.row);
+                    const col = parseInt(pixel.dataset.col);
+                    
+                    // Add neighbors
+                    // Up
+                    if (row > 0) {
+                        const upIndex = (row - 1) * gridSize + col;
+                        const up = pixels.find(p => p.dataset.index == upIndex);
+                        if (up && !visited.has(up.dataset.index) && up.style.backgroundColor === targetColor) {
+                            queue.push(up);
+                        }
+                    }
+                    
+                    // Down
+                    if (row < gridSize - 1) {
+                        const downIndex = (row + 1) * gridSize + col;
+                        const down = pixels.find(p => p.dataset.index == downIndex);
+                        if (down && !visited.has(down.dataset.index) && down.style.backgroundColor === targetColor) {
+                            queue.push(down);
+                        }
+                    }
+                    
+                    // Left
+                    if (col > 0) {
+                        const leftIndex = row * gridSize + (col - 1);
+                        const left = pixels.find(p => p.dataset.index == leftIndex);
+                        if (left && !visited.has(left.dataset.index) && left.style.backgroundColor === targetColor) {
+                            queue.push(left);
+                        }
+                    }
+                    
+                    // Right
+                    if (col < gridSize - 1) {
+                        const rightIndex = row * gridSize + (col + 1);
+                        const right = pixels.find(p => p.dataset.index == rightIndex);
+                        if (right && !visited.has(right.dataset.index) && right.style.backgroundColor === targetColor) {
+                            queue.push(right);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Touch event handlers
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const pixel = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (pixel && pixel.classList.contains("pixel")) {
+                isDrawing = true;
+                
+                if (currentTool === "fill") {
+                    fillArea(pixel);
+                } else {
+                    colorPixel(pixel);
+                }
+            }
+        }
+        
+        function handleTouchMove(e) {
+            if (!isDrawing) return;
+            
+            e.preventDefault();
+            const touch = e.touches[0];
+            const pixel = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (pixel && pixel.classList.contains("pixel")) {
+                colorPixel(pixel);
+            }
+        }
+        
+        // Save image as PNG
+        function saveImage() {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            
+            canvas.width = gridSize * pixelSize;
+            canvas.height = gridSize * pixelSize;
+            
+            const pixels = document.querySelectorAll(".pixel");
+            pixels.forEach(pixel => {
+                const row = parseInt(pixel.dataset.row);
+                const col = parseInt(pixel.dataset.col);
+                ctx.fillStyle = pixel.style.backgroundColor || "#ffffff";
+                ctx.fillRect(col * pixelSize, row * pixelSize, pixelSize, pixelSize);
+            });
+            
+            // Create download link
+            const link = document.createElement("a");
+            link.download = "pixel-art.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        }
+        
+        // Initialize the app
+        initApp();
+    </script>
+</body>
+</html>
