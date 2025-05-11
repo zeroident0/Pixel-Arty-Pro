@@ -2,7 +2,7 @@
 
 A modern, feature-rich pixel art editor built with HTML, CSS, and JavaScript. Create beautiful pixel art with an intuitive interface and powerful tools.
 
-![Pixel Arty Pro Screenshot](screenshot.png)
+![Pixel Arty Pro Screenshot](screenshot.PNG)
 
 ## Features
 
