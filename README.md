@@ -21,7 +21,7 @@ A modern, feature-rich pixel art editor built with HTML, CSS, and JavaScript. Cr
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/pixel-arty-pro.git
+git clone https://github.com/zeroident0/Pixel-Arty-Pro.git
 ```
 
 2. Open `index.html` in your web browser
