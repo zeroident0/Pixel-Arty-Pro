@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Pixel Arty Pro
 
 A modern, feature-rich pixel art editor built with HTML, CSS, and JavaScript. Create beautiful pixel art with an intuitive interface and powerful tools.
@@ -45,25 +44,17 @@ git clone https://github.com/zeroident0/Pixel-Arty-Pro.git
 - **Save**: Download your artwork as a PNG file
 
 ## Browser Support
-
 - Chrome (recommended)
 - Firefox
 - Safari
 - Edge
 
 ## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Contributions are welcome, Please feel free to submit a Pull Request
 
 ## Acknowledgments
-
 - Icons from Material Design Icons
 - Inspired by classic pixel art editors 
-
 
 # Pixel-Arty-Pro
 Pixel art online editor - open source
