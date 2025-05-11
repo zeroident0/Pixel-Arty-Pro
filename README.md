@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Pixel Arty Pro
 
 A modern, feature-rich pixel art editor built with HTML, CSS, and JavaScript. Create beautiful pixel art with an intuitive interface and powerful tools.
@@ -62,3 +63,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Icons from Material Design Icons
 - Inspired by classic pixel art editors 
+=======
+# Pixel-Arty-Pro
+Pixel art online editor - open source
+>>>>>>> 12d8811e029d59fda8f4dac220450c915c3ab136
