@@ -1,6 +1,6 @@
 # Pixel Arty Pro
 
-A modern, feature-rich pixel art editor built with HTML, CSS, and JavaScript. Create beautiful pixel art with an intuitive interface and powerful tools.
+Nice pixel art editor built with HTML, CSS, and JavaScript. Create beautiful pixel art with a simple tools
 
 ![Pixel Arty Pro Screenshot](screenshot.PNG)
 
